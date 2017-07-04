@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="refresh" content="5">
+    <title></title>
+</head>
+<body bgcolor="#4267b2"><p align="center" style="color: #ffffff;">Controle de Ataques</p>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+        var markers = [
+            {
+                "title": 'ALGAR',
+                "lat": '-22.0154',
+                "lng": '-47.888',
+                "description": 'ALGAR.'
+            }
+,{"title": 'Aires,',"lat": '-37.6719',"lng": '-59.8065',"description": 'Aires,'},{"title": 'Netherlands',"lat": '52.3824',"lng": '4.8995',"description": 'Netherlands'},{"title": 'Honduras',"lat": '15.5',"lng": '-88.0333',"description": 'Honduras'},{"title": 'China',"lat": '22.2769',"lng": '113.5678',"description": 'China'},{"title": 'Nội,',"lat": '21.0333',"lng": '105.85',"description": 'Nội,'},{"title": 'China',"lat": '32.0617',"lng": '118.7778',"description": 'China'},{"title": 'Argentina',"lat": '-34.6033',"lng": '-58.3817',"description": 'Argentina'},{"title": 'Czech',"lat": '50.0848',"lng": '14.4112',"description": 'Czech'},{"title": 'de',"lat": '-22.8864',"lng": '-43.2037',"description": 'de'},{"title": 'Kray,',"lat": '58.2947',"lng": '57.8228',"description": 'Kray,'},{"title": 'Lumpur,',"lat": '3.0094',"lng": '101.7755',"description": 'Lumpur,'},{"title": 'Nội,',"lat": '21.0333',"lng": '105.85',"description": 'Nội,'},{"title": 'Nội,',"lat": '21.0333',"lng": '105.85',"description": 'Nội,'},{"title": 'Province,',"lat": '41.7922',"lng": '123.4328',"description": 'Province,'},{"title": 'Nội,',"lat": '21.0333',"lng": '105.85',"description": 'Nội,'},{"title": 'United',"lat": '41.7742',"lng": '-87.7153',"description": 'United'},{"title": 'Kong',"lat": '22.291',"lng": '114.15',"description": 'Kong'},{"title": 'China',"lat": '36.6683',"lng": '116.9972',"description": 'China'},{"title": 'China',"lat": '32.0617',"lng": '118.7778',"description": 'China'},{"title": 'Kray,',"lat": '58',"lng": '56.25',"description": 'Kray,'},{"title": 'Aires,',"lat": '-34.9314',"lng": '-57.9489',"description": 'Aires,'},{"title": '',"lat": '',"lng": '',"description": ''}
+];
+        window.onload = function () {
+            var mapOptions = {
+                center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+            var infoWindow = new google.maps.InfoWindow();
+            var lat_lng = new Array();
+            var latlngbounds = new google.maps.LatLngBounds();
+            for (i = 0; i < markers.length; i++) {
+                var data = markers[i]
+                var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                lat_lng.push(myLatlng);
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    title: data.title
+                });
+                latlngbounds.extend(marker.position);
+                (function (marker, data) {
+                    google.maps.event.addListener(marker, "click", function (e) {
+                        infoWindow.setContent(data.description);
+                        infoWindow.open(map, marker);
+                    });
+                })(marker, data);
+            }
+            map.setCenter(latlngbounds.getCenter());
+            map.fitBounds(latlngbounds);
+
+            //***********ROUTING****************//
+
+            //Intialize the Path Array
+            var path = new google.maps.MVCArray();
+
+            //Intialize the Direction Service
+            var service = new google.maps.DirectionsService();
+
+            //Set the Path Stroke Color
+            var poly = new google.maps.Polyline({ map: map, strokeColor: '#4986E7' });
+
+            //Loop and Draw Path Route between the Points on MAP
+            for (var i = 0; i < lat_lng.length; i++) {
+                if ((i + 1) < lat_lng.length) {
+                    var src = lat_lng[i];
+                    var des = lat_lng[i + 1];
+                    path.push(src);
+                    poly.setPath(path);
+                    service.route({
+                        origin: src,
+                        destination: des,
+                        travelMode: google.maps.DirectionsTravelMode.DRIVING
+                    }, function (result, status) {
+                        if (status == google.maps.DirectionsStatus.OK) {
+                            for (var i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
+                                path.push(result.routes[0].overview_path[i]);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+    <div id="dvMap" style="width: 1000px; height: 650px">
+    </div>
+</body>
+</html>
