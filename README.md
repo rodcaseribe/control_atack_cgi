@@ -1,1 +1,1 @@
-# control_atack_cgi
+# controle de ataque p/ fail2ban em cgi
