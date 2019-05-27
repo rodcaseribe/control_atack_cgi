@@ -1,4 +1,4 @@
-# Controle de ataques para fail2ban com nmap e BASH
+# Controle de ataques para Fail2ban com Nmap e BASH
 
 Realizando filtros com bash e nmap e fazendo repasse para um html simples.
 
